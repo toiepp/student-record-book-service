@@ -1,30 +1,65 @@
 package com.mikholskiy.recordbook.service;
 
 import com.mikholskiy.recordbook.dto.AssessmentItemDto;
+import com.mikholskiy.recordbook.dto.SubjectDto;
 import com.mikholskiy.recordbook.dto.SubjectRequestDto;
+import com.mikholskiy.recordbook.dto.UserDto;
 import com.mikholskiy.recordbook.entity.AssessmentItem;
 import com.mikholskiy.recordbook.entity.Subject;
 import com.mikholskiy.recordbook.entity.User;
 import com.mikholskiy.recordbook.repository.AssessmentItemRepository;
 import com.mikholskiy.recordbook.repository.SubjectRepository;
 import com.mikholskiy.recordbook.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+
 @Service
 public class AdminService {
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private AuthService authService;
-    @Autowired
     private SubjectRepository subjectRepository;
-
-    @Autowired
     private AssessmentItemRepository assessmentItemRepository;
 
+
+    @Autowired
+    public AdminService setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        return this;
+    }
+
+    @Autowired
+    public AdminService setAuthService(AuthService authService) {
+        this.authService = authService;
+        return this;
+    }
+
+    @Autowired
+    public AdminService setSubjectRepository(SubjectRepository subjectRepository) {
+        this.subjectRepository = subjectRepository;
+        return this;
+    }
+
+    @Autowired
+    public AdminService setAssessmentItemRepository(AssessmentItemRepository assessmentItemRepository) {
+        this.assessmentItemRepository = assessmentItemRepository;
+        return this;
+    }
+
+    public List<UserDto> findAllUsers() {
+        return userRepository.findAll().stream()
+                .map(user -> new UserDto(user.getId(), user.getEmail(), user.getLastName(), user.getFirstName(), user.getRole().name()))
+                .sorted((o1, o2) -> (int) (o1.getId() - o2.getId()))
+                .collect(Collectors.toList());
+    }
+
+
+/*
     public User updateUser(Long userId, User updatedUser) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -37,13 +72,31 @@ public class AdminService {
 
         return userRepository.save(existingUser);
     }
+*/
 
     public void deleteUser(Long userId) {
-        userRepository.deleteById(userId);
+        var user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("user does not exists"));
+        user.getEnrolledSubjects().forEach(subject -> subject.removeStudent(user));
+        user.getEnrolledSubjects().clear();
+        var assessments = assessmentItemRepository.findAll();
+        assessments.stream()
+                .filter(assessmentItem -> assessmentItem.getStudent().getId().equals(user.getId()))
+                .forEach(assessmentItem -> assessmentItem.setStudent(null));
+        userRepository.delete(user);
     }
 
+    public List<SubjectDto> findAllSubject() {
+        List<Subject> subjects = subjectRepository.findAll();
+        return subjects.stream()
+                .map(subject -> {
+                    var teacher = userRepository.findById(subject.getTeacher().getId())
+                            .orElseThrow(() -> new EntityNotFoundException("No such user"));
 
-    public Subject createSubject(SubjectRequestDto subjectDTO) {
+                    return SubjectDto.from(subject, teacher);
+                }).collect(Collectors.toList());
+    }
+
+    public SubjectDto createSubject(SubjectRequestDto subjectDTO) {
         Subject newSubject = new Subject();
         newSubject.setName(subjectDTO.getName());
 
@@ -53,10 +106,12 @@ public class AdminService {
 
         newSubject.assignTeacher(teacher);
 
-        return subjectRepository.save(newSubject);
+        var subject = subjectRepository.save(newSubject);
+
+        return SubjectDto.from(subject, teacher);
     }
 
-    public Subject updateSubject(Long subjectId, SubjectRequestDto subjectRequest) {
+    public SubjectDto updateSubject(Long subjectId, SubjectRequestDto subjectRequest) {
         Subject existingSubject = subjectRepository.findById(subjectId)
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
 
@@ -64,13 +119,29 @@ public class AdminService {
         User teacher = userRepository.findById(subjectRequest.getTeacherId())
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));
         existingSubject.setTeacher(teacher);
-        return subjectRepository.save(existingSubject);
+        var saved = subjectRepository.save(existingSubject);
+
+        return SubjectDto.from(saved, teacher);
     }
 
     public void deleteSubject(Long subjectId) {
         subjectRepository.deleteById(subjectId);
     }
 
+
+    public List<AssessmentItemDto> findAllAssessments() {
+        List<AssessmentItem> assessmentItems = assessmentItemRepository.findAll();
+        return assessmentItems.stream()
+                .map(assessmentItem -> new AssessmentItemDto(
+                        assessmentItem.getType(),
+                        assessmentItem.getExaminerName(),
+                        assessmentItem.getGrade(),
+                        assessmentItem.getExamDate(),
+                        assessmentItem.getSubject().getId(),
+                        assessmentItem.getTeacher().getId(),
+                        assessmentItem.getStudent().getId()
+                )).collect(Collectors.toList());
+    }
 
     public AssessmentItem createAssessmentItem(AssessmentItemDto assessmentItemDTO) {
         AssessmentItem newAssessmentItem = new AssessmentItem();
@@ -132,6 +203,7 @@ public class AdminService {
         }
         return assessmentItemRepository.save(existingAssessmentItem);
     }
+
     private String createExaminerName(String firstName, String lastName, String fatherName) {
         return firstName + " " + lastName + " " + fatherName;
     }
@@ -140,7 +212,6 @@ public class AdminService {
     public void deleteAssessmentItem(Long assessmentItemId) {
         assessmentItemRepository.deleteById(assessmentItemId);
     }
-
 
 
     public void addStudentToSubject(Long studentId, Long subjectId) {

@@ -1,7 +1,6 @@
 package com.mikholskiy.recordbook.controller;
 
-import com.mikholskiy.recordbook.dto.AssessmentItemDto;
-import com.mikholskiy.recordbook.dto.SubjectRequestDto;
+import com.mikholskiy.recordbook.dto.*;
 import com.mikholskiy.recordbook.entity.AssessmentItem;
 import com.mikholskiy.recordbook.entity.Subject;
 import com.mikholskiy.recordbook.entity.User;
@@ -11,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -23,11 +24,16 @@ public class AdminController {
         return this;
     }
 
-    @PutMapping("/users/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User updatedUser) {
-        User updated = adminService.updateUser(userId, updatedUser);
-        return ResponseEntity.ok(updated);
+    @GetMapping("/users")
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(adminService.findAllUsers());
     }
+
+//    @PutMapping("/users/{userId}")
+//    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User updatedUser) {
+//        User updated = adminService.updateUser(userId, updatedUser);
+//        return ResponseEntity.ok(updated);
+//    }
 
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
@@ -35,16 +41,21 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/subjects")
+    public ResponseEntity<List<SubjectDto>> getAllSubjects() {
+        return ResponseEntity.ok(adminService.findAllSubject());
+    }
 
     @PostMapping("/subjects")
-    public ResponseEntity<Subject> createSubject(@RequestBody SubjectRequestDto subjectDTO) {
-        Subject created = adminService.createSubject(subjectDTO);
+    public ResponseEntity<SubjectDto> createSubject(@RequestBody SubjectRequestDto subjectDTO) {
+        var created = adminService.createSubject(subjectDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/subjects/{subjectId}")
-    public ResponseEntity<Subject> updateSubject(@PathVariable Long subjectId, @RequestBody SubjectRequestDto subjectDTO) {
-        Subject updated = adminService.updateSubject(subjectId, subjectDTO);
+    public ResponseEntity<SubjectDto> updateSubject(@PathVariable Long subjectId,
+                                                 @RequestBody SubjectRequestDto subjectDTO) {
+        SubjectDto updated = adminService.updateSubject(subjectId, subjectDTO);
         return ResponseEntity.ok(updated);
     }
 
@@ -54,6 +65,11 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/assessmentItems")
+    public ResponseEntity<List<AssessmentItemDto>> findAllAssessments() {
+        var assessments = adminService.findAllAssessments();
+        return ResponseEntity.ok(assessments);
+    }
 
     @PostMapping("/assessmentItems")
     public ResponseEntity<AssessmentItem> createAssessmentItem(@RequestBody AssessmentItemDto assessmentItemDTO) {

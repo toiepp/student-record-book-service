@@ -40,20 +40,20 @@ create table assessment_items
     type          varchar(100),
     grade         int,
     exam_date     date,
-    student_id    int references app_users (id),
+    student_id    int references app_users (id) on DELETE CASCADE on update cascade ,
     teacher_id    int references app_users (id),
     subject_id    int references subjects (id)
 );
 
 insert into app_users (email, password, first_name, last_name, role, created_date, is_approved)
-values ('dfenix6@tiny.cc', '$2a$04$qXrOZ0VR9QXKP1IysOBzM.RRONdPZGa0ZmpwBGU472uyQ5CfTFt/e', 'Dinny', 'Fenix', 'USER',
+values ('dfenix6@tiny.cc', '$2a$04$qXrOZ0VR9QXKP1IysOBzM.RRONdPZGa0ZmpwBGU472uyQ5CfTFt/e', 'Dinny', 'Fenix', 'STUDENT',
         '2023-02-12', true);
 insert into app_users (email, password, first_name, last_name, role, created_date, is_approved)
 values ('dbullard7@exblog.jp', '$2a$04$N84JaJ8MWulfjeAGBH9anOULO0IX81cs8G3tpiyAu1.nZO0PKeL6m', 'Devan', 'Bullard',
-        'USER', '2021-10-24', true);
+        'STUDENT', '2021-10-24', true);
 insert into app_users (email, password, first_name, last_name, role, created_date, is_approved)
 values ('jlytell8@shop-pro.jp', '$2a$04$VnLxKfKbfbJgNZ9sqgNh2.E5Bf9GOK6T.teg3SOOlJROPuR3fiJlS', 'Jenni', 'Lytell',
-        'USER', '2023-07-17', true);
+        'STUDENT', '2023-07-17', true);
 insert into app_users (email, password, first_name, last_name, role, created_date, is_approved)
 values ('zgerrietz9@patch.com', '$2a$04$YuRDTE6NGBEnqOlIj0A64OqUuqbsvOlrBWfzzWaxB1uhg9km6r50a', 'Zachery',
         'Gerrietz', 'TEACHER', '2022-05-13', true);

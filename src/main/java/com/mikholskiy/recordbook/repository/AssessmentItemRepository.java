@@ -12,7 +12,5 @@ public interface AssessmentItemRepository extends JpaRepository<AssessmentItem, 
 
     List<AssessmentItem> findBySubjectAndTypeAndExamDateAfter(Subject subject, String exam, LocalDateTime currentDateTime);
 
-
-
     List<AssessmentItem> findBySubjectAndStudent(Subject subject, User student);
 }

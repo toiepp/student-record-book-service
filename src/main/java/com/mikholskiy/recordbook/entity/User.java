@@ -38,9 +38,14 @@ public class User implements UserDetails {
         return List.of(new SimpleGrantedAuthority((role.name())));
     }
 
-    @ManyToMany(mappedBy = "students")
+    @ManyToMany(mappedBy = "students",
+            cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
     @JsonIgnoreProperties("enrolledSubjects")
     private List<Subject> enrolledSubjects = new ArrayList<>();
+
+    @OneToMany(mappedBy = "student",
+            cascade = CascadeType.ALL)
+    private List<AssessmentItem> assessmentItems = new ArrayList<>();
 
     @Override
     public String getUsername() {

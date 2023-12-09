@@ -26,7 +26,9 @@ public class Subject {
     @JoinColumn(name = "teacher_id")
     private User teacher;
 
-    @ManyToMany
+    @ManyToMany(
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH}
+    )
     @JoinTable(
             name = "subject_students",
             joinColumns = @JoinColumn(name = "subject_id"),

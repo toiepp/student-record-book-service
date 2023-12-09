@@ -13,28 +13,26 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "assessment_item")
+@Table(name = "assessment_items")
 public class AssessmentItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String type;
     private String examinerName;
     private Integer grade;
-
     private LocalDateTime examDate;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "subject_id")
     @JsonBackReference
     private Subject subject;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "teacher_id")
     private User teacher;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "student_id")
     private User student;
 

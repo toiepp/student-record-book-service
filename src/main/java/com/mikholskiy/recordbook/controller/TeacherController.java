@@ -1,5 +1,7 @@
 package com.mikholskiy.recordbook.controller;
 
+import com.mikholskiy.recordbook.dto.AssessmentItemDto;
+import com.mikholskiy.recordbook.dto.SubjectRequestDto;
 import com.mikholskiy.recordbook.entity.AssessmentItem;
 import com.mikholskiy.recordbook.entity.Subject;
 import com.mikholskiy.recordbook.service.TeacherService;
@@ -12,25 +14,29 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/teacher")
 public class TeacherController {
-
-    @Autowired
     TeacherService teacherService;
 
+    @Autowired
+    public TeacherController setTeacherService(TeacherService teacherService) {
+        this.teacherService = teacherService;
+        return this;
+    }
+
     @GetMapping("/subjects/{teacherId}")
-    public ResponseEntity<List<Subject>> getSubjectsByTeacher(@PathVariable Long teacherId) {
-        List<Subject> subjects = teacherService.getSubjectsByTeacher(teacherId);
+    public ResponseEntity<List<SubjectRequestDto>> getSubjectsByTeacher(@PathVariable Long teacherId) {
+        var subjects = teacherService.getSubjectsByTeacher(teacherId);
         return ResponseEntity.ok(subjects);
     }
 
 
     @PostMapping("/assessmentItems/{teacherId}/{subjectId}/{studentId}")
-    public ResponseEntity<AssessmentItem> createAssessmentItem(
+    public ResponseEntity<AssessmentItemDto> createAssessmentItem(
             @PathVariable Long teacherId,
             @PathVariable Long subjectId,
             @PathVariable Long studentId,
             @RequestBody AssessmentItem assessmentItem
     ) {
-       AssessmentItem assessmentItem1 = teacherService.createAssessmentItem(teacherId,subjectId,studentId,assessmentItem);
-        return ResponseEntity.ok(assessmentItem1);
+       var assessmentItemDto = teacherService.createAssessmentItem(teacherId,subjectId,studentId,assessmentItem);
+        return ResponseEntity.ok(assessmentItemDto);
     }
 }
