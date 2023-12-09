@@ -11,13 +11,13 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentGradeDTO {
+public class StudentGradeDto {
         private String subjectName;
         private String type;
         private String examinerName;
         private Integer grade;
         private LocalDateTime examDate;
 
-        private TeacherDTO teacher;
-        private SubjectRequestDTO subject;
+        private TeacherDto teacher;
+        private SubjectRequestDto subject;
 }

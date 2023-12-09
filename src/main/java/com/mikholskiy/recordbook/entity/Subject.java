@@ -3,7 +3,6 @@ package com.mikholskiy.recordbook.entity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.mikholskiy.recordbook.dto.SubjectRequestDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(name = "subject")
+@Table(name = "subjects")
 public class Subject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +28,7 @@ public class Subject {
 
     @ManyToMany
     @JoinTable(
-            name = "subject_student",
+            name = "subject_students",
             joinColumns = @JoinColumn(name = "subject_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<User> students = new ArrayList<>();

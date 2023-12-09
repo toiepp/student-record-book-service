@@ -1,4 +1,4 @@
-package com.mikholskiy.recordbook.rest;
+package com.mikholskiy.recordbook.controller;
 
 import com.mikholskiy.recordbook.entity.AssessmentItem;
 import com.mikholskiy.recordbook.entity.Subject;

@@ -1,6 +1,6 @@
-package com.mikholskiy.recordbook.rest;
+package com.mikholskiy.recordbook.controller;
 
-import com.mikholskiy.recordbook.dto.StudentGradeDTO;
+import com.mikholskiy.recordbook.dto.StudentGradeDto;
 import com.mikholskiy.recordbook.entity.AssessmentItem;
 import com.mikholskiy.recordbook.service.JwtService;
 import com.mikholskiy.recordbook.service.StudentService;
@@ -20,9 +20,9 @@ public class StudentController {
     JwtService jwtService;
 
     @GetMapping("/grades/{studentId}")
-    public ResponseEntity<List<StudentGradeDTO>> getStudentGrades(@PathVariable Long studentId) {
+    public ResponseEntity<List<StudentGradeDto>> getStudentGrades(@PathVariable Long studentId) {
 
-        List<StudentGradeDTO> studentGrades = studentService.getStudentGrades(studentId);
+        List<StudentGradeDto> studentGrades = studentService.getStudentGrades(studentId);
         return ResponseEntity.ok(studentGrades);
     }
     @GetMapping("/upcoming-exams/{studentId}")

@@ -2,22 +2,18 @@ package com.mikholskiy.recordbook.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.mikholskiy.recordbook.dto.StudentGradeDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
 @Getter
 @Setter
-@Table(name = "assessmentItem")
+@Table(name = "assessment_item")
 public class AssessmentItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

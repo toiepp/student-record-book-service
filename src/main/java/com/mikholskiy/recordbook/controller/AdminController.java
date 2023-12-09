@@ -1,7 +1,7 @@
-package com.mikholskiy.recordbook.rest;
+package com.mikholskiy.recordbook.controller;
 
-import com.mikholskiy.recordbook.dto.AssessmentItemDTO;
-import com.mikholskiy.recordbook.dto.SubjectRequestDTO;
+import com.mikholskiy.recordbook.dto.AssessmentItemDto;
+import com.mikholskiy.recordbook.dto.SubjectRequestDto;
 import com.mikholskiy.recordbook.entity.AssessmentItem;
 import com.mikholskiy.recordbook.entity.Subject;
 import com.mikholskiy.recordbook.entity.User;
@@ -15,9 +15,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
+    private AdminService adminService;
 
     @Autowired
-    private AdminService adminService;
+    public AdminController setAdminService(AdminService adminService) {
+        this.adminService = adminService;
+        return this;
+    }
 
     @PutMapping("/users/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User updatedUser) {
@@ -33,13 +37,13 @@ public class AdminController {
 
 
     @PostMapping("/subjects")
-    public ResponseEntity<Subject> createSubject(@RequestBody SubjectRequestDTO subjectDTO) {
+    public ResponseEntity<Subject> createSubject(@RequestBody SubjectRequestDto subjectDTO) {
         Subject created = adminService.createSubject(subjectDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/subjects/{subjectId}")
-    public ResponseEntity<Subject> updateSubject(@PathVariable Long subjectId, @RequestBody SubjectRequestDTO subjectDTO) {
+    public ResponseEntity<Subject> updateSubject(@PathVariable Long subjectId, @RequestBody SubjectRequestDto subjectDTO) {
         Subject updated = adminService.updateSubject(subjectId, subjectDTO);
         return ResponseEntity.ok(updated);
     }
@@ -52,14 +56,14 @@ public class AdminController {
 
 
     @PostMapping("/assessmentItems")
-    public ResponseEntity<AssessmentItem> createAssessmentItem(@RequestBody AssessmentItemDTO assessmentItemDTO) {
+    public ResponseEntity<AssessmentItem> createAssessmentItem(@RequestBody AssessmentItemDto assessmentItemDTO) {
         AssessmentItem created = adminService.createAssessmentItem(assessmentItemDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
 
     @PutMapping("/assessmentItems/{assessmentItemId}")
-    public ResponseEntity<AssessmentItem> updateAssessmentItem(@PathVariable Long assessmentItemId, @RequestBody AssessmentItemDTO assessmentItemDTO) {
+    public ResponseEntity<AssessmentItem> updateAssessmentItem(@PathVariable Long assessmentItemId, @RequestBody AssessmentItemDto assessmentItemDTO) {
         AssessmentItem updated = adminService.updateAssessmentItem(assessmentItemId, assessmentItemDTO);
         return ResponseEntity.ok(updated);
     }

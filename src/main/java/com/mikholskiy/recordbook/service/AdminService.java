@@ -1,7 +1,7 @@
 package com.mikholskiy.recordbook.service;
 
-import com.mikholskiy.recordbook.dto.AssessmentItemDTO;
-import com.mikholskiy.recordbook.dto.SubjectRequestDTO;
+import com.mikholskiy.recordbook.dto.AssessmentItemDto;
+import com.mikholskiy.recordbook.dto.SubjectRequestDto;
 import com.mikholskiy.recordbook.entity.AssessmentItem;
 import com.mikholskiy.recordbook.entity.Subject;
 import com.mikholskiy.recordbook.entity.User;
@@ -43,7 +43,7 @@ public class AdminService {
     }
 
 
-    public Subject createSubject(SubjectRequestDTO subjectDTO) {
+    public Subject createSubject(SubjectRequestDto subjectDTO) {
         Subject newSubject = new Subject();
         newSubject.setName(subjectDTO.getName());
 
@@ -56,7 +56,7 @@ public class AdminService {
         return subjectRepository.save(newSubject);
     }
 
-    public Subject updateSubject(Long subjectId, SubjectRequestDTO subjectRequest) {
+    public Subject updateSubject(Long subjectId, SubjectRequestDto subjectRequest) {
         Subject existingSubject = subjectRepository.findById(subjectId)
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
 
@@ -72,7 +72,7 @@ public class AdminService {
     }
 
 
-    public AssessmentItem createAssessmentItem(AssessmentItemDTO assessmentItemDTO) {
+    public AssessmentItem createAssessmentItem(AssessmentItemDto assessmentItemDTO) {
         AssessmentItem newAssessmentItem = new AssessmentItem();
         newAssessmentItem.setType(assessmentItemDTO.getType());
         newAssessmentItem.setGrade(assessmentItemDTO.getGrade());
@@ -102,7 +102,7 @@ public class AdminService {
     }
 
 
-    public AssessmentItem updateAssessmentItem(Long assessmentItemId, AssessmentItemDTO updatedAssessmentItemDTO) {
+    public AssessmentItem updateAssessmentItem(Long assessmentItemId, AssessmentItemDto updatedAssessmentItemDTO) {
         AssessmentItem existingAssessmentItem = assessmentItemRepository.findById(assessmentItemId)
                 .orElseThrow(() -> new RuntimeException("Assessment item not found"));
 

@@ -1,6 +1,6 @@
 package com.mikholskiy.recordbook.service;
 
-import com.mikholskiy.recordbook.dto.StudentGradeDTO;
+import com.mikholskiy.recordbook.dto.StudentGradeDto;
 import com.mikholskiy.recordbook.entity.AssessmentItem;
 import com.mikholskiy.recordbook.entity.Subject;
 import com.mikholskiy.recordbook.entity.User;
@@ -23,15 +23,15 @@ public class StudentService {
     private AssessmentItemRepository assessmentItemRepository;
 
 
-    public List<StudentGradeDTO> getStudentGrades(Long studentId) {
+    public List<StudentGradeDto> getStudentGrades(Long studentId) {
         User student = userRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
         List<Subject> enrolledSubjects = student.getEnrolledSubjects();
 
-        List<StudentGradeDTO> studentGrades = new ArrayList<>();
+        List<StudentGradeDto> studentGrades = new ArrayList<>();
         for (Subject subject : enrolledSubjects) {
             List<AssessmentItem> assessments = assessmentItemRepository.findBySubjectAndStudent(subject, student);
             for (AssessmentItem assessment : assessments) {
-                StudentGradeDTO gradeDTO = new StudentGradeDTO();
+                StudentGradeDto gradeDTO = new StudentGradeDto();
                 gradeDTO.setSubjectName(subject.getName());
                 gradeDTO.setType(assessment.getType());
                 gradeDTO.setExaminerName(assessment.getExaminerName());
@@ -46,11 +46,11 @@ public class StudentService {
     }
 
 //
-//    public List<StudentGradeDTO> getStudentGrades(Long studentId) {
+//    public List<StudentGradeDto> getStudentGrades(Long studentId) {
 //        User student = userRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
 //        List<Subject> enrolledSubjects = student.getEnrolledSubjects();
 //
-//        List<StudentGradeDTO> studentGrades = new ArrayList<>();
+//        List<StudentGradeDto> studentGrades = new ArrayList<>();
 //        LocalDateTime currentDateTime = LocalDateTime.now();
 //
 //        for (Subject subject : enrolledSubjects) {
@@ -59,7 +59,7 @@ public class StudentService {
 //            for (AssessmentItem assessment : exams) {
 //                if (assessment.getExamDate() != null && assessment.getExamDate().isAfter(currentDateTime)) {
 //                    // Проверяем, что дата экзамена в будущем
-//                    StudentGradeDTO gradeDTO = new StudentGradeDTO();
+//                    StudentGradeDto gradeDTO = new StudentGradeDto();
 //                    gradeDTO.setSubjectName(subject.getName());
 //                    gradeDTO.setType(assessment.getType());
 //                    gradeDTO.setExaminerName(assessment.getExaminerName());

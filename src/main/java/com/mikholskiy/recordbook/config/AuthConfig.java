@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,9 +27,13 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @ComponentScan(basePackages = "com.mikholskiy")
 public class AuthConfig {
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    public AuthConfig setJwtAuthenticationFilter(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        return this;
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -39,13 +44,15 @@ public class AuthConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).authorizeHttpRequests(
-                auth -> auth.requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/student/**").hasAnyRole("STUDENT","ADMIN")
-                        .requestMatchers("/api/teacher/**").hasAnyRole("TEACHER","ADMIN")
-                        .anyRequest().authenticated())
-                        .csrf(AbstractHttpConfigurer::disable)
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(
+                        auth -> auth.requestMatchers("/api/**").permitAll()
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/api/student/**").hasAnyRole("STUDENT", "ADMIN")
+                                .requestMatchers("/api/teacher/**").hasAnyRole("TEACHER", "ADMIN")
+                                .anyRequest().authenticated())
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(withDefaults());
         return http.build();
     }

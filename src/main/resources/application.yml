@@ -11,7 +11,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: mihoho1980@gmail.com
-    password: spflmk7qwokUza4flM
+    password: "peku bsxm tzkb spic"
   jpa:
     properties:
       hibernate:
@@ -19,9 +19,10 @@ spring:
         show_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   main:
     allow-bean-definition-overriding: true
+    allow-circular-references: true
 logging:
   level:
     org.springframework.security: DEBUG

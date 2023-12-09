@@ -9,78 +9,73 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private JwtService jwtService;
 
-
-
+    private UserDetailsService userDetailsService;
 
     @Autowired
-    private JwtService jwtService;
+    public JwtAuthenticationFilter setJwtService(JwtService jwtService) {
+        this.jwtService = jwtService;
+        return this;
+    }
+
+    @Autowired
+    public JwtAuthenticationFilter setUserDetailsService(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+        return this;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException, java.io.IOException {
-        if (request.getRequestURI().equals("/api/auth/validate")) {
-            // Пропустить валидацию для /api/auth/validate
+        final String token = getTokenFromRequest(request);
+        final String username;
+
+        if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
-        try {
-            String token = extractToken(request);
 
-            if (token != null) {
-                System.out.println("Token received: " + token);
+        username = jwtService.getUsernameFromToken(token);
 
-                // Вывод информации о правилах авторизации
-                System.out.println("Authorization rules for the request: " + request.getRequestURI());
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                // Проверка токена
-                jwtService.validateToken(token);
+            if (jwtService.isTokenValid(token, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities());
 
-                // Получение информации об аутентификации
-                Authentication authentication = jwtService.getAuthentication(token);
-                System.out.println("User '" + authentication.getName() + "' authenticated with roles: " + authentication.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // Установка контекста безопасности
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                System.out.println("Security context set for user: " + SecurityContextHolder.getContext().getAuthentication().getName());
-            } else {
-                System.out.println("No token found in the request");
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
 
-            // Выведем принципала (Principal)
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            System.out.println("Current principal: " + authentication);
-
-        } catch (ExpiredJwtException eje) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token has expired");
-            System.out.println("Token has expired: " + eje.getMessage());
-            return;
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Unauthorized access to the application");
-            System.out.println("Unauthorized access to the application: " + e.getMessage());
-            return;
         }
 
         filterChain.doFilter(request, response);
     }
 
-        private String extractToken(HttpServletRequest request) {
-            String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+    private String getTokenFromRequest(HttpServletRequest request) {
+        final String authHeader=request.getHeader(HttpHeaders.AUTHORIZATION);
 
-            if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
-                return header.substring("Bearer ".length());
-            }
-
-            return null;
+        if(StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer "))
+        {
+            return authHeader.substring(7);
         }
+        return null;
     }
+}

@@ -1,99 +1,107 @@
 package com.mikholskiy.recordbook.service;
 
 
-import com.mikholskiy.recordbook.dto.AuthLoginDTO;
+import com.mikholskiy.recordbook.dto.AuthResponseDto;
+import com.mikholskiy.recordbook.dto.LoginDto;
 import com.mikholskiy.recordbook.entity.User;
 import com.mikholskiy.recordbook.entity.UserRole;
 import com.mikholskiy.recordbook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
 public class AuthService {
-    @Autowired
+    private UserRepository userRepository;
     private JwtService jwtService;
-    @Autowired
-    private UserRepository repository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
+    private AuthenticationManager authenticationManager;
     private EmailService emailService;
 
-    public String saveUser(AuthLoginDTO credential) {
-        if (repository.findByEmail(credential.getEmail()).isPresent()) {
+    @Autowired
+    public AuthService setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        return this;
+    }
+
+    @Autowired
+    public AuthService setJwtService(JwtService jwtService) {
+        this.jwtService = jwtService;
+        return this;
+    }
+
+    @Autowired
+    public AuthService setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+        return this;
+    }
+
+    @Autowired
+    public AuthService setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+        return this;
+    }
+
+    @Autowired
+    public AuthService setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+        return this;
+    }
+
+    public AuthResponseDto login(LoginDto loginDto) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
+        UserDetails user = (UserDetails) userRepository.findByEmail(loginDto.getEmail()).orElseThrow();
+        String token = jwtService.getToken(user);
+        return AuthResponseDto.builder()
+                .token(token)
+                .build();
+
+    }
+
+    public AuthResponseDto register(LoginDto credential) {
+        if (userRepository.findByEmail(credential.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
 
-        User user = new User();
-        user.setEmail(credential.getEmail());
-        user.setRole(credential.getUserRole());
-        user.setIsApproved(credential.getUserRole() == UserRole.ADMIN);
+        User.UserBuilder userBuilder;
 
         if (credential.getUserRole() == UserRole.ADMIN) {
-            user.setPassword(passwordEncoder.encode(credential.getPassword()));
-        }
-
-        repository.save(user);
-        return "User added to the system";
-    }
-
-
-    public Map<String, String> loginUser(AuthLoginDTO authLoginDTO){
-        Map<String, String> json = new HashMap<>();
-        String email = authLoginDTO.getEmail();
-        String password = authLoginDTO.getPassword();
-        json.put("accessToken", "Bearer " + getAccessToken(email, password));
-        return json;
-    }
-
-
-
-
-    public String generateToken(String email, UserRole role) {
-            return jwtService.generateToken(email, role);
-        }
-
-    public void validateToken(String token){
-        try {
-            jwtService.validateToken(token);
-            System.out.println("token is valid");
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Token validation failed");
-        }
-    }
-
-    public String getAccessToken(String email, String password) {
-        Optional<User> userCredentialOptional = repository.findByEmail(email);
-
-        if (userCredentialOptional.isPresent()) {
-            User user = userCredentialOptional.get();
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                if (user.getIsApproved()) {
-                    System.out.println(user.getRole());
-                    return jwtService.generateToken(user.getEmail(), user.getRole());
-                } else {
-                    throw new RuntimeException("User is not approved");
-                }
-            } else {
-                throw new RuntimeException("Invalid password");
-            }
+            userBuilder = User.builder()
+                    .email(credential.getEmail())
+                    .password(passwordEncoder.encode(credential.getPassword()))
+                    .role(credential.getUserRole())
+                    .isApproved(true);
         } else {
-            throw new RuntimeException("User with email " + email + " not found");
+            userBuilder = User.builder()
+                    .email(credential.getEmail())
+                    .role(credential.getUserRole())
+                    .createdDate(LocalDateTime.now())
+                    .isApproved(false);
         }
-    }
 
+        var user = userBuilder
+                .firstName(credential.getFirstName())
+                .lastName(credential.getLastName())
+                .fatherName(credential.getFatherName())
+                .build();
+
+
+        System.out.println(jwtService.getToken(user));
+        userRepository.save(user);
+
+        return AuthResponseDto.builder()
+                .token(jwtService.getToken(user))
+                .build();
+    }
 
     public void approveUser(String userEmail) {
-        User user = repository.findByEmail(userEmail)
+        User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
 
         user.setIsApproved(true);
@@ -103,8 +111,8 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(generatedPassword);
 
         user.setPassword(encodedPassword);
-
-        repository.save(user);
+        System.out.println(encodedPassword);
+        userRepository.save(user);
 
         emailService.sendApprovalEmail(user.getEmail(), generatedPassword);
     }

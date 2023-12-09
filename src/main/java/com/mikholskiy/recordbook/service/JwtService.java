@@ -2,6 +2,7 @@ package com.mikholskiy.recordbook.service;
 
 import com.mikholskiy.recordbook.entity.UserRole;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -15,66 +16,64 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.*;
+import java.util.function.Function;
 
 import static io.jsonwebtoken.Jwts.builder;
 import static io.jsonwebtoken.Jwts.parserBuilder;
 
 @Component
 public class JwtService {
-
     public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
 
-    public void validateToken(final String token) {
-        try {
-            parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token);
-            System.out.println(token);
-        } catch (Exception e) {
-            System.out.println("Token validation failed: " + e.getMessage());
-            throw new RuntimeException("Token validation failed");
-        }
+    public String getToken(UserDetails user) {
+        return getToken(new HashMap<>(), user);
     }
 
-    public Authentication getAuthentication(String token) {
-        try {
-            Claims claims = parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token).getBody();
-
-            String username = claims.getSubject();
-            UserRole role = UserRole.valueOf((String) claims.get("role"));
-
-            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role.name()));
-
-            UserDetails userDetails = new User(username, "", authorities);
-
-            System.out.println("User '" + username + "' authenticated with role '" + role + "'");
-
-            return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
-        } catch (Exception e) {
-            System.out.println("Error during authentication: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Authentication failed");
-        }
-    }
-
-
-    public String generateToken(String email, UserRole role) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);
-
-        return createToken(claims, email);
-    }
-
-    private String createToken(Map<String, Object> claims, String userName) {
-        return builder()
-                .setClaims(claims)
-                .setSubject(userName)
+    private String getToken(Map<String, Object> extraClaims, UserDetails user) {
+        return Jwts
+                .builder()
+                .setClaims(extraClaims)
+                .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
-                .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 86400))
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
-    private Key getSignKey() {
+    private Key getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    public String getUsernameFromToken(String token) {
+        return getClaim(token, Claims::getSubject);
+    }
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    private Claims getAllClaims(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+
+    public <T> T getClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = getAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Date getExpiration(String token) {
+        return getClaim(token, Claims::getExpiration);
+    }
+
+    private boolean isTokenExpired(String token) {
+        return getExpiration(token).before(new Date());
+    }
 }

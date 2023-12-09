@@ -9,7 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubjectRequestDTO {
-    private String name;
-    private Long teacherId;
+public class TeacherDto {
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String fatherName;
 }
