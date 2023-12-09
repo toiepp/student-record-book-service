@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://db:5432/grade_book_db
+    username: grade_book_user
+    password: grade_book_password
+    driver-class-name: org.postgresql.Driver
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: mihoho1980@gmail.com
+    password: spflmk7qwokUza4flM
+  jpa:
+    properties:
+      hibernate:
+        format_sql: false
+        show_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create-drop
+  main:
+    allow-bean-definition-overriding: true
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+#springdoc:
+#  swagger-ui:
+#    path: /swagger-ui-custom.html
+#    operations-sorter: method
