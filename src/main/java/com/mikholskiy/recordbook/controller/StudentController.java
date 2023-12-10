@@ -6,6 +6,7 @@ import com.mikholskiy.recordbook.service.JwtService;
 import com.mikholskiy.recordbook.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,13 +22,7 @@ public class StudentController {
 
     @GetMapping("/grades/{studentId}")
     public ResponseEntity<List<StudentGradeDto>> getStudentGrades(@PathVariable Long studentId) {
-
         List<StudentGradeDto> studentGrades = studentService.getStudentGrades(studentId);
         return ResponseEntity.ok(studentGrades);
-    }
-    @GetMapping("/upcoming-exams/{studentId}")
-    public ResponseEntity<List<AssessmentItem>> getUpcomingExams(@PathVariable Long studentId) {
-        List<AssessmentItem> upcomingExams = studentService.getUpcomingExamsForStudent(studentId);
-        return ResponseEntity.ok(upcomingExams);
     }
 }

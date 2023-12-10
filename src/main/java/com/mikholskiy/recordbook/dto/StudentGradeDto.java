@@ -17,7 +17,4 @@ public class StudentGradeDto {
         private String examinerName;
         private Integer grade;
         private LocalDateTime examDate;
-
-        private TeacherDto teacher;
-        private SubjectRequestDto subject;
 }

@@ -7,6 +7,7 @@ import com.mikholskiy.recordbook.entity.User;
 import com.mikholskiy.recordbook.entity.UserRole;
 import com.mikholskiy.recordbook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,7 +57,7 @@ public class AuthService {
 
     public AuthResponseDto login(LoginDto loginDto) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
-        UserDetails user = (UserDetails) userRepository.findByEmail(loginDto.getEmail()).orElseThrow();
+        UserDetails user = userRepository.findByEmail(loginDto.getEmail()).orElseThrow();
         String token = jwtService.getToken(user);
         return AuthResponseDto.builder()
                 .token(token)
@@ -64,7 +65,7 @@ public class AuthService {
 
     }
 
-    public AuthResponseDto register(LoginDto credential) {
+    public void register(LoginDto credential) {
         if (userRepository.findByEmail(credential.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
@@ -95,9 +96,9 @@ public class AuthService {
         System.out.println(jwtService.getToken(user));
         userRepository.save(user);
 
-        return AuthResponseDto.builder()
-                .token(jwtService.getToken(user))
-                .build();
+//        return AuthResponseDto.builder()
+//                .token(jwtService.getToken(user))
+//                .build();
     }
 
     public void approveUser(String userEmail) {

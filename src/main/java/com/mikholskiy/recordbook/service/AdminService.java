@@ -9,6 +9,7 @@ import com.mikholskiy.recordbook.repository.SubjectRepository;
 import com.mikholskiy.recordbook.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
