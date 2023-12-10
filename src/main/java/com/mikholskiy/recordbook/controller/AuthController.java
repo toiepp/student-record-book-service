@@ -24,29 +24,20 @@ public class AuthController {
         return this;
     }
 
-    @Operation(
-            summary = "Вход в систему",
-            description = "Метод для входа в систему с использованием предоставленных учетных данных."
-    )
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto) {
         try {
             return ResponseEntity.ok(authService.login(loginDto));
         } catch (RuntimeException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
-    @Operation(
-            summary = "Регистрация нового пользователя",
-            description = "Метод для регистрации нового пользователя с использованием предоставленных учетных данных."
-    )
     @PostMapping("/register")
     public ResponseEntity<AuthResponseDto> register(@RequestBody LoginDto loginDto) {
         try {
             return ResponseEntity.ok(authService.register(loginDto));
         } catch (RuntimeException e) {
-//            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }

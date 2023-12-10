@@ -72,15 +72,16 @@ public class AdminController {
     }
 
     @PostMapping("/assessmentItems")
-    public ResponseEntity<AssessmentItem> createAssessmentItem(@RequestBody AssessmentItemDto assessmentItemDTO) {
+    public ResponseEntity<AssessmentItem> createAssessmentItem(@RequestBody AssessmentRequestDto assessmentItemDTO) {
         AssessmentItem created = adminService.createAssessmentItem(assessmentItemDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
 
     @PutMapping("/assessmentItems/{assessmentItemId}")
-    public ResponseEntity<AssessmentItem> updateAssessmentItem(@PathVariable Long assessmentItemId, @RequestBody AssessmentItemDto assessmentItemDTO) {
-        AssessmentItem updated = adminService.updateAssessmentItem(assessmentItemId, assessmentItemDTO);
+    public ResponseEntity<AssessmentItem> updateAssessmentItem(@PathVariable Long assessmentItemId,
+                                                               @RequestBody AssessmentUpdateRequest assessmentUpdateRequest) {
+        AssessmentItem updated = adminService.updateAssessmentItem(assessmentItemId, assessmentUpdateRequest);
         return ResponseEntity.ok(updated);
     }
 
@@ -104,27 +105,20 @@ public class AdminController {
     }
 
 
-    @PostMapping("/subjects/{subjectId}/teachers/{teacherId}")
-    public ResponseEntity<Void> assignTeacherToSubject(@PathVariable Long teacherId, @PathVariable Long subjectId) {
+    @PutMapping("/subjects/{subjectId}/teachers")
+    public ResponseEntity<Void> assignTeacherToSubject(@PathVariable Long subjectId, @RequestParam Long teacherId) {
         adminService.assignTeacherToSubject(teacherId, subjectId);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/subjects/{subjectId}/teachers")
-    public ResponseEntity<Void> unassignTeacherFromSubject(@PathVariable Long subjectId) {
-        adminService.unassignTeacherFromSubject(subjectId);
-        return ResponseEntity.noContent().build();
-    }
-
     @PostMapping("/approveUser")
-    public ResponseEntity<Void> approveUser(@RequestParam String userEmail) {
+    public ResponseEntity<Void> approveUser(@RequestParam("email") String userEmail) {
         adminService.approveUser(userEmail);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/rejectUser")
-    public ResponseEntity<Void> rejectUser(@RequestParam String userEmail) {
+    public ResponseEntity<Void> rejectUser(@RequestParam("email") String userEmail) {
         adminService.rejectUser(userEmail);
         return ResponseEntity.ok().build();
     }

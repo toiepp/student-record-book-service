@@ -1,9 +1,6 @@
 package com.mikholskiy.recordbook.service;
 
-import com.mikholskiy.recordbook.dto.AssessmentItemDto;
-import com.mikholskiy.recordbook.dto.SubjectDto;
-import com.mikholskiy.recordbook.dto.SubjectRequestDto;
-import com.mikholskiy.recordbook.dto.UserDto;
+import com.mikholskiy.recordbook.dto.*;
 import com.mikholskiy.recordbook.entity.AssessmentItem;
 import com.mikholskiy.recordbook.entity.Subject;
 import com.mikholskiy.recordbook.entity.User;
@@ -14,6 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.StringJoiner;
@@ -143,19 +141,19 @@ public class AdminService {
                 )).collect(Collectors.toList());
     }
 
-    public AssessmentItem createAssessmentItem(AssessmentItemDto assessmentItemDTO) {
+    public AssessmentItem createAssessmentItem(AssessmentRequestDto assessmentRequestDto) {
         AssessmentItem newAssessmentItem = new AssessmentItem();
-        newAssessmentItem.setType(assessmentItemDTO.getType());
-        newAssessmentItem.setGrade(assessmentItemDTO.getGrade());
-        newAssessmentItem.setExamDate(assessmentItemDTO.getExamDate());
+        newAssessmentItem.setType(assessmentRequestDto.getType());
+        newAssessmentItem.setGrade(assessmentRequestDto.getGrade());
+        newAssessmentItem.setExamDate(LocalDateTime.now());
 
 
-        Subject subject = subjectRepository.findById(assessmentItemDTO.getSubjectId())
+        Subject subject = subjectRepository.findById(assessmentRequestDto.getSubjectId())
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
         newAssessmentItem.setSubject(subject);
 
 
-        User teacher = userRepository.findById(assessmentItemDTO.getTeacherId())
+        User teacher = userRepository.findById(assessmentRequestDto.getTeacherId())
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));
         newAssessmentItem.setTeacher(teacher);
 
@@ -163,44 +161,36 @@ public class AdminService {
         newAssessmentItem.setExaminerName(examinerName);
 
 
-        if (assessmentItemDTO.getStudentId() != null) {
-            User student = userRepository.findById(assessmentItemDTO.getStudentId())
+        if (assessmentRequestDto.getStudentId() != null) {
+            User student = userRepository.findById(assessmentRequestDto.getStudentId())
                     .orElseThrow(() -> new RuntimeException("Student not found"));
             newAssessmentItem.setStudent(student);
         }
 
-        return assessmentItemRepository.save(newAssessmentItem);
+        var save = assessmentItemRepository.save(newAssessmentItem);
+
+        return save;
     }
 
 
-    public AssessmentItem updateAssessmentItem(Long assessmentItemId, AssessmentItemDto updatedAssessmentItemDTO) {
+    public AssessmentItem updateAssessmentItem(Long assessmentItemId, AssessmentUpdateRequest assessmentUpdateRequest) {
         AssessmentItem existingAssessmentItem = assessmentItemRepository.findById(assessmentItemId)
                 .orElseThrow(() -> new RuntimeException("Assessment item not found"));
 
-        existingAssessmentItem.setType(updatedAssessmentItemDTO.getType());
-        existingAssessmentItem.setExaminerName(updatedAssessmentItemDTO.getExaminerName());
-        existingAssessmentItem.setGrade(updatedAssessmentItemDTO.getGrade());
-        existingAssessmentItem.setExamDate(updatedAssessmentItemDTO.getExamDate());
+        // обновить можно только оценку и преподавателя
 
+        existingAssessmentItem.setGrade(assessmentUpdateRequest.getGrade());
+        existingAssessmentItem.setExamDate(LocalDateTime.now());
 
-        Subject subject = subjectRepository.findById(updatedAssessmentItemDTO.getSubjectId())
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
-        existingAssessmentItem.setSubject(subject);
+        if (assessmentUpdateRequest.getTeacherId() != null) {
+            User teacher = userRepository.findById(assessmentUpdateRequest.getTeacherId())
+                    .orElseThrow(() -> new RuntimeException("Teacher not found"));
+            existingAssessmentItem.setTeacher(teacher);
 
-
-        User teacher = userRepository.findById(updatedAssessmentItemDTO.getTeacherId())
-                .orElseThrow(() -> new RuntimeException("Teacher not found"));
-        existingAssessmentItem.setTeacher(teacher);
-
-        String examinerName = createExaminerName(teacher.getFirstName(), teacher.getLastName(), teacher.getFatherName());
-        existingAssessmentItem.setExaminerName(examinerName);
-
-
-        if (updatedAssessmentItemDTO.getStudentId() != null) {
-            User student = userRepository.findById(updatedAssessmentItemDTO.getStudentId())
-                    .orElseThrow(() -> new RuntimeException("Student not found"));
-            existingAssessmentItem.setStudent(student);
+            String examinerName = createExaminerName(teacher.getFirstName(), teacher.getLastName(), teacher.getFatherName());
+            existingAssessmentItem.setExaminerName(examinerName);
         }
+
         return assessmentItemRepository.save(existingAssessmentItem);
     }
 
