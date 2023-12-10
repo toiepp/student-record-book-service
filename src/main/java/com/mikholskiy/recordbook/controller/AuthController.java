@@ -1,17 +1,13 @@
 package com.mikholskiy.recordbook.controller;
 
 
-import com.mikholskiy.recordbook.dto.LoginDto;
-import com.mikholskiy.recordbook.dto.AuthResponseDto;
+import com.mikholskiy.recordbook.model.dto.LoginDto;
+import com.mikholskiy.recordbook.model.dto.RegisterDto;
+import com.mikholskiy.recordbook.model.dto.AuthResponseDto;
 import com.mikholskiy.recordbook.service.AuthService;
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,7 +31,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponseDto> register(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<AuthResponseDto> register(@RequestBody RegisterDto loginDto) {
         try {
             authService.register(loginDto);
             return ResponseEntity.ok().build();

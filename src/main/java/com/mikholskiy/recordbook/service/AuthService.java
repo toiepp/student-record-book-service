@@ -1,13 +1,13 @@
 package com.mikholskiy.recordbook.service;
 
 
-import com.mikholskiy.recordbook.dto.AuthResponseDto;
-import com.mikholskiy.recordbook.dto.LoginDto;
-import com.mikholskiy.recordbook.entity.User;
-import com.mikholskiy.recordbook.entity.UserRole;
+import com.mikholskiy.recordbook.model.dto.AuthResponseDto;
+import com.mikholskiy.recordbook.model.dto.LoginDto;
+import com.mikholskiy.recordbook.model.dto.RegisterDto;
+import com.mikholskiy.recordbook.model.User;
+import com.mikholskiy.recordbook.model.UserRole;
 import com.mikholskiy.recordbook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -65,7 +65,7 @@ public class AuthService {
 
     }
 
-    public void register(LoginDto credential) {
+    public void register(RegisterDto credential) {
         if (userRepository.findByEmail(credential.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }

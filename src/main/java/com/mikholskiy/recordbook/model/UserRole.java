@@ -1,4 +1,4 @@
-package com.mikholskiy.recordbook.entity;
+package com.mikholskiy.recordbook.model;
 
 public enum UserRole {
     ADMIN,

@@ -1,4 +1,4 @@
-package com.mikholskiy.recordbook.entity;
+package com.mikholskiy.recordbook.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;

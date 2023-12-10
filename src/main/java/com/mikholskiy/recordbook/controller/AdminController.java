@@ -1,15 +1,12 @@
 package com.mikholskiy.recordbook.controller;
 
-import com.mikholskiy.recordbook.dto.*;
-import com.mikholskiy.recordbook.entity.AssessmentItem;
-import com.mikholskiy.recordbook.entity.Subject;
-import com.mikholskiy.recordbook.entity.User;
+import com.mikholskiy.recordbook.model.dto.*;
+import com.mikholskiy.recordbook.model.AssessmentItem;
 import com.mikholskiy.recordbook.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,12 +27,6 @@ public class AdminController {
     public ResponseEntity<List<UserDto>> getAllUsers() {
         return ResponseEntity.ok(adminService.findAllUsers());
     }
-
-//    @PutMapping("/users/{userId}")
-//    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User updatedUser) {
-//        User updated = adminService.updateUser(userId, updatedUser);
-//        return ResponseEntity.ok(updated);
-//    }
 
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
@@ -75,8 +66,8 @@ public class AdminController {
 
     @PostMapping("/assessmentItems")
     public ResponseEntity<AssessmentItem> createAssessmentItem(@RequestBody AssessmentRequestDto assessmentItemDTO) {
-        AssessmentItem created = adminService.createAssessmentItem(assessmentItemDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        adminService.createAssessmentItem(assessmentItemDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 

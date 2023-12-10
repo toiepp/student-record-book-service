@@ -1,15 +1,12 @@
 package com.mikholskiy.recordbook.controller;
 
-import com.mikholskiy.recordbook.dto.AssessmentItemDto;
-import com.mikholskiy.recordbook.dto.GradeRequest;
-import com.mikholskiy.recordbook.dto.SubjectRequestDto;
-import com.mikholskiy.recordbook.entity.AssessmentItem;
-import com.mikholskiy.recordbook.entity.Subject;
+import com.mikholskiy.recordbook.model.dto.AssessmentItemDto;
+import com.mikholskiy.recordbook.model.dto.GradeRequest;
+import com.mikholskiy.recordbook.model.dto.SubjectRequestDto;
 import com.mikholskiy.recordbook.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

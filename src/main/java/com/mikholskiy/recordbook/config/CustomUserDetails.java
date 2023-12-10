@@ -1,8 +1,8 @@
 package com.mikholskiy.recordbook.config;
 
 
-import com.mikholskiy.recordbook.entity.User;
-import com.mikholskiy.recordbook.entity.UserRole;
+import com.mikholskiy.recordbook.model.User;
+import com.mikholskiy.recordbook.model.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

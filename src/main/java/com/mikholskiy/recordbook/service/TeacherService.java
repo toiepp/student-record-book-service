@@ -1,12 +1,12 @@
 package com.mikholskiy.recordbook.service;
 
-import com.mikholskiy.recordbook.dto.AssessmentItemDto;
-import com.mikholskiy.recordbook.dto.GradeRequest;
-import com.mikholskiy.recordbook.dto.StudentDto;
-import com.mikholskiy.recordbook.dto.SubjectRequestDto;
-import com.mikholskiy.recordbook.entity.AssessmentItem;
-import com.mikholskiy.recordbook.entity.Subject;
-import com.mikholskiy.recordbook.entity.User;
+import com.mikholskiy.recordbook.model.dto.AssessmentItemDto;
+import com.mikholskiy.recordbook.model.dto.GradeRequest;
+import com.mikholskiy.recordbook.model.dto.StudentDto;
+import com.mikholskiy.recordbook.model.dto.SubjectRequestDto;
+import com.mikholskiy.recordbook.model.AssessmentItem;
+import com.mikholskiy.recordbook.model.Subject;
+import com.mikholskiy.recordbook.model.User;
 import com.mikholskiy.recordbook.repository.AssessmentItemRepository;
 import com.mikholskiy.recordbook.repository.SubjectRepository;
 import com.mikholskiy.recordbook.repository.UserRepository;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 @Service

@@ -1,21 +1,19 @@
 package com.mikholskiy.recordbook.service;
 
 import com.mikholskiy.recordbook.dto.*;
-import com.mikholskiy.recordbook.entity.AssessmentItem;
-import com.mikholskiy.recordbook.entity.Subject;
-import com.mikholskiy.recordbook.entity.User;
+import com.mikholskiy.recordbook.model.AssessmentItem;
+import com.mikholskiy.recordbook.model.Subject;
+import com.mikholskiy.recordbook.model.User;
+import com.mikholskiy.recordbook.model.dto.*;
 import com.mikholskiy.recordbook.repository.AssessmentItemRepository;
 import com.mikholskiy.recordbook.repository.SubjectRepository;
 import com.mikholskiy.recordbook.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 @Service

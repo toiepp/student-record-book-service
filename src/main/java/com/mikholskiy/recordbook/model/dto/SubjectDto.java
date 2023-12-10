@@ -1,7 +1,7 @@
-package com.mikholskiy.recordbook.dto;
+package com.mikholskiy.recordbook.model.dto;
 
-import com.mikholskiy.recordbook.entity.Subject;
-import com.mikholskiy.recordbook.entity.User;
+import com.mikholskiy.recordbook.model.Subject;
+import com.mikholskiy.recordbook.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.mikholskiy.recordbook.repository;
 
-import com.mikholskiy.recordbook.entity.Subject;
-import com.mikholskiy.recordbook.entity.User;
+import com.mikholskiy.recordbook.model.Subject;
+import com.mikholskiy.recordbook.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

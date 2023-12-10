@@ -1,6 +1,6 @@
-package com.mikholskiy.recordbook.dto;
+package com.mikholskiy.recordbook.model.dto;
 
-import com.mikholskiy.recordbook.entity.UserRole;
+import com.mikholskiy.recordbook.model.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginDto {
+public class RegisterDto {
     private String email;
     private String password;
     private String firstName;

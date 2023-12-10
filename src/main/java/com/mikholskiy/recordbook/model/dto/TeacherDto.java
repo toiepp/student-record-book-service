@@ -1,17 +1,17 @@
-package com.mikholskiy.recordbook.dto;
+package com.mikholskiy.recordbook.model.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@Builder
-@NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
-public class StudentDto {
+@NoArgsConstructor
+public class TeacherDto {
+    private Long id;
     private String firstName;
     private String lastName;
     private String fatherName;
-    private Long id;
 }

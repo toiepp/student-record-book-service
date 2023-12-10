@@ -1,6 +1,6 @@
 package com.mikholskiy.recordbook.config;
 
-import com.mikholskiy.recordbook.entity.User;
+import com.mikholskiy.recordbook.model.User;
 import com.mikholskiy.recordbook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

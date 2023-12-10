@@ -1,9 +1,9 @@
 package com.mikholskiy.recordbook.service;
 
-import com.mikholskiy.recordbook.dto.StudentGradeDto;
-import com.mikholskiy.recordbook.entity.AssessmentItem;
-import com.mikholskiy.recordbook.entity.Subject;
-import com.mikholskiy.recordbook.entity.User;
+import com.mikholskiy.recordbook.model.dto.StudentGradeDto;
+import com.mikholskiy.recordbook.model.AssessmentItem;
+import com.mikholskiy.recordbook.model.Subject;
+import com.mikholskiy.recordbook.model.User;
 import com.mikholskiy.recordbook.repository.AssessmentItemRepository;
 import com.mikholskiy.recordbook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

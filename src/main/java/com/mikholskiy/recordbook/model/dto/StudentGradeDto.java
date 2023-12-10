@@ -1,4 +1,4 @@
-package com.mikholskiy.recordbook.dto;
+package com.mikholskiy.recordbook.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
