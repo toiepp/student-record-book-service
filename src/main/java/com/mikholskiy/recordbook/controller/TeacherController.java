@@ -8,12 +8,14 @@ import com.mikholskiy.recordbook.entity.Subject;
 import com.mikholskiy.recordbook.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Secured({"ADMIN", "TEACHER"})
 @RequestMapping("/api/teacher")
 public class TeacherController {
     TeacherService teacherService;
@@ -30,17 +32,6 @@ public class TeacherController {
         return ResponseEntity.ok(subjects);
     }
 
-
-//    @PostMapping("/assessmentItems/{teacherId}/{subjectId}/{studentId}")
-//    public ResponseEntity<AssessmentItemDto> createAssessmentItem(
-//            @PathVariable Long teacherId,
-//            @PathVariable Long subjectId,
-//            @PathVariable Long studentId,
-//            @RequestBody AssessmentItem assessmentItem
-//    ) {
-//        var assessmentItemDto = teacherService.createAssessmentItem(teacherId, subjectId, studentId, assessmentItem);
-//        return ResponseEntity.ok(assessmentItemDto);
-//    }
 
     @PostMapping("/assessmentItems/{teacherId}/{subjectId}/{studentId}")
     public ResponseEntity<AssessmentItemDto> createAssessmentItem(

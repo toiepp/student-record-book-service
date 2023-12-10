@@ -25,7 +25,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan(basePackages = "com.mikholskiy")
+@EnableMethodSecurity(securedEnabled = true)
+//@ComponentScan(basePackages = "com.mikholskiy.recordbook.controller")
 public class AuthConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -44,13 +45,11 @@ public class AuthConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-//                .authorizeHttpRequests(
-//                        auth -> auth.requestMatchers("/api/auth/**").permitAll()
-//                                .requestMatchers("/api/teacher/**").hasAnyRole()
-//                                .requestMatchers("/api/student/**").hasAnyRole("STUDENT", "ADMIN")
-//                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-//                                .anyRequest().authenticated())
+                .authorizeHttpRequests(
+                        auth -> auth.requestMatchers("/api/auth/**").permitAll()
+                                .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
+                .authenticationProvider(authenticationProvider())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(withDefaults());
         return http.build();
