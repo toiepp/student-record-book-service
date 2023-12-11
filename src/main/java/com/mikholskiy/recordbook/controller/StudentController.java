@@ -14,13 +14,15 @@ import java.util.List;
 @Secured({"ADMIN", "STUDENT"})
 @RequestMapping("/api/student")
 public class StudentController {
-    @Autowired
     private StudentService studentService;
 
     @Autowired
-    JwtService jwtService;
+    public StudentController setStudentService(StudentService studentService) {
+        this.studentService = studentService;
+        return this;
+    }
 
-    @GetMapping("/grades/{studentId}")
+    @GetMapping("/{studentId}/grades")
     public ResponseEntity<List<StudentGradeDto>> getStudentGrades(@PathVariable Long studentId) {
         List<StudentGradeDto> studentGrades = studentService.getStudentGrades(studentId);
         return ResponseEntity.ok(studentGrades);

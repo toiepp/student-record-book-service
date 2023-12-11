@@ -1,6 +1,5 @@
 package com.mikholskiy.recordbook.service;
 
-import com.mikholskiy.recordbook.dto.*;
 import com.mikholskiy.recordbook.model.AssessmentItem;
 import com.mikholskiy.recordbook.model.Subject;
 import com.mikholskiy.recordbook.model.User;

@@ -47,7 +47,7 @@ public class AdminController {
 
     @PutMapping("/subjects/{subjectId}")
     public ResponseEntity<SubjectDto> updateSubject(@PathVariable Long subjectId,
-                                                 @RequestBody SubjectRequestDto subjectDTO) {
+                                                    @RequestBody SubjectRequestDto subjectDTO) {
         SubjectDto updated = adminService.updateSubject(subjectId, subjectDTO);
         return ResponseEntity.ok(updated);
     }
@@ -74,8 +74,8 @@ public class AdminController {
     @PutMapping("/assessmentItems/{assessmentItemId}")
     public ResponseEntity<AssessmentItem> updateAssessmentItem(@PathVariable Long assessmentItemId,
                                                                @RequestBody AssessmentUpdateRequest assessmentUpdateRequest) {
-        AssessmentItem updated = adminService.updateAssessmentItem(assessmentItemId, assessmentUpdateRequest);
-        return ResponseEntity.ok(updated);
+        adminService.updateAssessmentItem(assessmentItemId, assessmentUpdateRequest);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/assessmentItems/{assessmentItemId}")
@@ -98,8 +98,8 @@ public class AdminController {
     }
 
 
-    @PutMapping("/subjects/{subjectId}/teachers")
-    public ResponseEntity<Void> assignTeacherToSubject(@PathVariable Long subjectId, @RequestParam Long teacherId) {
+    @PutMapping("/subjects/{subjectId}/teachers/{teacherId}")
+    public ResponseEntity<Void> assignTeacherToSubject(@PathVariable Long subjectId, @PathVariable Long teacherId) {
         adminService.assignTeacherToSubject(teacherId, subjectId);
         return ResponseEntity.noContent().build();
     }

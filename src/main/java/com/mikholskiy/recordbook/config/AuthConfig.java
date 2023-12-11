@@ -24,7 +24,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
-//@ComponentScan(basePackages = "com.mikholskiy.recordbook.controller")
 public class AuthConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 

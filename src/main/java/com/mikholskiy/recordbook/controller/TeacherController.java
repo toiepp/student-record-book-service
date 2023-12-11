@@ -15,7 +15,7 @@ import java.util.List;
 @Secured({"ADMIN", "TEACHER"})
 @RequestMapping("/api/teacher")
 public class TeacherController {
-    TeacherService teacherService;
+    private TeacherService teacherService;
 
     @Autowired
     public TeacherController setTeacherService(TeacherService teacherService) {
@@ -23,20 +23,20 @@ public class TeacherController {
         return this;
     }
 
-    @GetMapping("/subjects/{teacherId}")
+    @GetMapping("/{teacherId}/subjects")
     public ResponseEntity<List<SubjectRequestDto>> getSubjectsByTeacher(@PathVariable Long teacherId) {
         var subjects = teacherService.getSubjectsByTeacher(teacherId);
         return ResponseEntity.ok(subjects);
     }
 
 
-    @PostMapping("/assessmentItems/{teacherId}/{subjectId}/{studentId}")
+    @PostMapping("/{teacherId}/assessmentItems")
     public ResponseEntity<AssessmentItemDto> createAssessmentItem(
             @PathVariable Long teacherId,
-            @PathVariable Long subjectId,
-            @PathVariable Long studentId,
+            @RequestParam Long subjectId,
+            @RequestParam Long studentId,
             @RequestBody GradeRequest gradeRequest
-            ) {
+    ) {
         var assessmentItemDto = teacherService.createAssessmentItem(teacherId, subjectId, studentId, gradeRequest);
         return ResponseEntity.ok(assessmentItemDto);
     }
